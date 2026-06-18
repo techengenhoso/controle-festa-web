@@ -11,7 +11,7 @@ export function Section({ title, subtitle, actions, children }: SectionProps) {
     <section className="section-card">
       <header className="section-header">
         <div>
-          <p>{subtitle}</p>
+          {subtitle && <p>{subtitle}</p>}
           <h1>{title}</h1>
         </div>
         {actions}
