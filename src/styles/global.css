@@ -203,7 +203,7 @@ button:disabled { cursor: not-allowed; opacity: .42; }
 .chip-list { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 2px; }
 .chip-list .btn { flex: 0 0 auto; }
 .consumption-menu { margin-bottom: 14px; }
-.registered-toggle { display: flex; justify-content: flex-end; margin-bottom: 0; }
+.registered-toggle { display: flex; justify-content: flex-end; margin-bottom: 14px; }
 .modal-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-top: 16px; }
 
 @media (max-width: 520px) {

@@ -4,7 +4,7 @@ const items: Array<{ id: SectionId; label: string; icon: string }> = [
   { id: 'parties', label: 'Festas', icon: '🎉' },
   { id: 'tabs', label: 'Comandas', icon: '💳' },
   { id: 'menu', label: 'Cardápios', icon: '🍹' },
-  { id: 'consumption', label: 'Consumo', icon: '🧾' },
+  { id: 'consumption', label: 'Consumos', icon: '🧾' },
   { id: 'balances', label: 'Saldos', icon: '📊' },
 ]
 
