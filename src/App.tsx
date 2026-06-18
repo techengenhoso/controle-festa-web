@@ -1,129 +1,146 @@
-import type { CSSProperties } from 'react'
-import './App.css'
+import { useEffect, useState } from 'react'
+import type { FormEvent } from 'react'
+import { Button } from './components/Button'
+import { Modal } from './components/Modal'
+import { Nav } from './components/Nav'
+import { Section } from './components/Section'
+import type { MenuItem, Party, SectionId, Tab } from './types'
+import { formatBrazilianDate, isValidBrazilianDate } from './utils/date'
+import { formatCurrency } from './utils/format'
+import { loadParties, saveParties } from './utils/storage'
+import './styles/global.css'
 
-type Shortcut = {
-  icon: string
-  label: string
-}
+type ModalState = 'party' | 'tab' | 'menu' | null
+type PartyForm = Pick<Party, 'name' | 'date' | 'notes'>
+type TabForm = Pick<Tab, 'code' | 'nfcCard' | 'minimumSpend'>
+type MenuForm = Pick<MenuItem, 'name' | 'price'>
 
-type Project = {
-  title: string
-  status: string
-  progress: number
-  accent: string
-}
-
-const shortcuts: Shortcut[] = [
-  { icon: '💡', label: 'Ideias' },
-  { icon: '📱', label: 'Apps' },
-  { icon: '🌐', label: 'Sites' },
-  { icon: '🤖', label: 'IA' },
-]
-
-const projects: Project[] = [
-  {
-    title: 'Aplicativo mobile',
-    status: 'Protótipo aprovado',
-    progress: 82,
-    accent: '#14b8a6',
-  },
-  {
-    title: 'Landing page',
-    status: 'Em desenvolvimento',
-    progress: 64,
-    accent: '#6366f1',
-  },
-]
+const newParty = (): PartyForm => ({ name: '', date: formatBrazilianDate(), notes: '' })
+const newTab = (): TabForm => ({ code: '', nfcCard: '', minimumSpend: 0 })
+const newMenu = (): MenuForm => ({ name: '', price: 0 })
+const id = () => crypto.randomUUID()
 
 function App() {
+  const [parties, setParties] = useState<Party[]>(() => loadParties())
+  const [section, setSection] = useState<SectionId>('parties')
+  const [showArchived, setShowArchived] = useState(false)
+  const [modal, setModal] = useState<ModalState>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [partyForm, setPartyForm] = useState(newParty)
+  const [tabForm, setTabForm] = useState(newTab)
+  const [menuForm, setMenuForm] = useState(newMenu)
+  const [selectedTab, setSelectedTab] = useState('')
+  const [selectedMenu, setSelectedMenu] = useState('')
+  const [toast, setToast] = useState('')
+
+  useEffect(() => saveParties(parties), [parties])
+  useEffect(() => {
+    if (!toast) return
+    const timer = window.setTimeout(() => setToast(''), 2400)
+    return () => window.clearTimeout(timer)
+  }, [toast])
+
+  const activeParty = parties.find((party) => party.active && !party.archived)
+  const visibleParties = showArchived ? parties : parties.filter((party) => !party.archived)
+  const activeTabs = activeParty?.tabs.filter((tab) => tab.active) ?? []
+  const activeMenu = activeParty?.menu.filter((item) => item.active) ?? []
+
+  const totals = {
+    consumed: activeParty?.consumptions.reduce((sum, item) => sum + item.price, 0) ?? 0,
+    minimum: activeParty?.tabs.reduce((sum, tab) => sum + tab.minimumSpend, 0) ?? 0,
+  }
+
+  function updateParty(partyId: string, updater: (party: Party) => Party) {
+    setParties((current) => current.map((party) => (party.id === partyId ? updater(party) : party)))
+  }
+
+  function openPartyForm(party?: Party) {
+    setEditingId(party?.id ?? null)
+    setPartyForm(party ? { name: party.name, date: party.date, notes: party.notes } : newParty())
+    setModal('party')
+  }
+
+  function saveParty(event: FormEvent) {
+    event.preventDefault()
+    if (!partyForm.name.trim() || !isValidBrazilianDate(partyForm.date)) return
+    const payload = { ...partyForm, name: partyForm.name.trim(), notes: partyForm.notes.trim() }
+    setParties((current) => editingId
+      ? current.map((party) => (party.id === editingId ? { ...party, ...payload } : party))
+      : [{ id: id(), ...payload, active: current.every((party) => party.archived), archived: false, createdAt: new Date().toISOString(), tabs: [], menu: [], consumptions: [] }, ...current])
+    setModal(null)
+  }
+
+  function setActiveParty(partyId: string, active: boolean) {
+    setParties((current) => current.map((party) => ({ ...party, active: active ? party.id === partyId : party.id === partyId ? false : party.active })))
+  }
+
+  function openTabForm(tab?: Tab) {
+    setEditingId(tab?.id ?? null)
+    setTabForm(tab ? { code: tab.code, nfcCard: tab.nfcCard, minimumSpend: tab.minimumSpend } : newTab())
+    setModal('tab')
+  }
+
+  function saveTab(event: FormEvent) {
+    event.preventDefault()
+    if (!activeParty || !tabForm.code.trim()) return
+    updateParty(activeParty.id, (party) => ({ ...party, tabs: editingId ? party.tabs.map((tab) => tab.id === editingId ? { ...tab, ...tabForm, code: tabForm.code.trim() } : tab) : [...party.tabs, { id: id(), ...tabForm, code: tabForm.code.trim(), active: true, createdAt: new Date().toISOString() }] }))
+    setModal(null)
+  }
+
+  function openMenuForm(item?: MenuItem) {
+    setEditingId(item?.id ?? null)
+    setMenuForm(item ? { name: item.name, price: item.price } : newMenu())
+    setModal('menu')
+  }
+
+  function saveMenu(event: FormEvent) {
+    event.preventDefault()
+    if (!activeParty || !menuForm.name.trim()) return
+    updateParty(activeParty.id, (party) => ({ ...party, menu: editingId ? party.menu.map((item) => item.id === editingId ? { ...item, ...menuForm, name: menuForm.name.trim() } : item) : [...party.menu, { id: id(), ...menuForm, name: menuForm.name.trim(), active: true, createdAt: new Date().toISOString() }] }))
+    setModal(null)
+  }
+
+  function registerConsumption() {
+    if (!activeParty || !selectedTab || !selectedMenu) return
+    const item = activeParty.menu.find((menuItem) => menuItem.id === selectedMenu)
+    if (!item) return
+    updateParty(activeParty.id, (party) => ({ ...party, consumptions: [...party.consumptions, { id: id(), tabId: selectedTab, menuItemId: item.id, itemName: item.name, price: item.price, createdAt: new Date().toISOString() }] }))
+    setToast('Consumo registrado com sucesso!')
+  }
+
+  const emptyActive = !activeParty
+
   return (
-    <main className="app-screen" aria-label="Réplica web mobile do app Tech Engenhoso">
-      <section className="phone-frame">
-        <header className="status-bar" aria-label="Barra de status">
-          <strong>09:41</strong>
-          <span>●●● 5G ▰</span>
+    <main className="app-shell">
+      <div className="app-container">
+        <header className="hero">
+          <span>Party Control</span>
+          <h1>Controle de festas, comandas, cardápio e saldos.</h1>
+          <p>{activeParty ? `Festa ativa: ${activeParty.name} • ${activeParty.date}` : 'Ative ou crie uma festa para começar.'}</p>
         </header>
 
-        <section className="home-header">
-          <div className="profile-row">
-            <div className="avatar" aria-hidden="true">TE</div>
-            <div>
-              <p>Olá, bem-vindo</p>
-              <h1>Tech Engenhoso</h1>
-            </div>
-            <button className="icon-button" type="button" aria-label="Notificações">🔔</button>
+        <div className="layout">
+          <Nav current={section} disabled={emptyActive} onChange={setSection} />
+          <div className="content">
+            {section === 'parties' && <Section title="Festas" subtitle="Gerencie eventos" actions={<><Button onClick={() => openPartyForm()}>Nova festa</Button><Button variant="secondary" onClick={() => setShowArchived((value) => !value)}>{showArchived ? 'Ocultar arquivadas' : 'Mostrar arquivadas'}</Button></>}>
+              <div className="grid-list">{visibleParties.map((party) => <article className="card" key={party.id}><div><h3>{party.name}</h3><p>{party.date} • {party.notes || 'Sem observações'}</p><div className="badges"><span>{party.active ? 'Ativa' : 'Inativa'}</span>{party.archived && <span>Arquivada</span>}</div></div><div className="actions"><Button variant="secondary" onClick={() => openPartyForm(party)}>Editar</Button><Button variant="secondary" onClick={() => setActiveParty(party.id, !party.active)} disabled={party.archived}>{party.active ? 'Desativar' : 'Ativar'}</Button><Button variant="secondary" onClick={() => updateParty(party.id, (p) => ({ ...p, archived: !p.archived, active: p.archived ? p.active : false }))}>{party.archived ? 'Desarquivar' : 'Arquivar'}</Button><Button variant="danger" onClick={() => setParties((list) => list.filter((p) => p.id !== party.id))}>Excluir</Button></div></article>)}</div>
+            </Section>}
+
+            {section === 'tabs' && activeParty && <Section title="Comandas" subtitle={activeParty.name} actions={<Button onClick={() => openTabForm()}>Nova comanda</Button>}><div className="grid-list">{activeParty.tabs.map((tab) => <article className="card" key={tab.id}><div><h3>{tab.code}</h3><p>NFC: {tab.nfcCard || 'não informado'} • Mínimo {formatCurrency(tab.minimumSpend)}</p><div className="badges"><span>{tab.active ? 'Ativa' : 'Inativa'}</span></div></div><div className="actions"><Button variant="secondary" onClick={() => openTabForm(tab)}>Editar</Button><Button variant="secondary" onClick={() => updateParty(activeParty.id, (p) => ({ ...p, tabs: p.tabs.map((t) => t.id === tab.id ? { ...t, active: !t.active } : t) }))}>{tab.active ? 'Desativar' : 'Ativar'}</Button><Button variant="danger" onClick={() => updateParty(activeParty.id, (p) => ({ ...p, tabs: p.tabs.filter((t) => t.id !== tab.id), consumptions: p.consumptions.filter((c) => c.tabId !== tab.id) }))}>Excluir</Button></div></article>)}</div></Section>}
+
+            {section === 'menu' && activeParty && <Section title="Cardápios" subtitle={activeParty.name} actions={<Button onClick={() => openMenuForm()}>Novo item</Button>}><div className="grid-list">{activeParty.menu.map((item) => <article className="card" key={item.id}><div><h3>{item.name}</h3><p>{formatCurrency(item.price)}</p><div className="badges"><span>{item.active ? 'Ativo' : 'Inativo'}</span></div></div><div className="actions"><Button variant="secondary" onClick={() => openMenuForm(item)}>Editar</Button><Button variant="secondary" onClick={() => updateParty(activeParty.id, (p) => ({ ...p, menu: p.menu.map((m) => m.id === item.id ? { ...m, active: !m.active } : m) }))}>{item.active ? 'Desativar' : 'Ativar'}</Button><Button variant="danger" onClick={() => updateParty(activeParty.id, (p) => ({ ...p, menu: p.menu.filter((m) => m.id !== item.id) }))}>Excluir</Button></div></article>)}</div></Section>}
+
+            {section === 'consumption' && activeParty && <Section title="Consumo" subtitle="Registrar itens"><div className="form-inline"><select value={selectedTab} onChange={(e) => setSelectedTab(e.target.value)}><option value="">Selecione a comanda</option>{activeTabs.map((tab) => <option key={tab.id} value={tab.id}>{tab.code}</option>)}</select><select value={selectedMenu} onChange={(e) => setSelectedMenu(e.target.value)}><option value="">Selecione o item</option>{activeMenu.map((item) => <option key={item.id} value={item.id}>{item.name} - {formatCurrency(item.price)}</option>)}</select><Button onClick={registerConsumption}>Registrar</Button></div><div className="grid-list">{activeParty.consumptions.map((item) => <article className="card compact" key={item.id}><div><h3>{item.itemName}</h3><p>{activeParty.tabs.find((tab) => tab.id === item.tabId)?.code} • {formatCurrency(item.price)}</p></div><Button variant="danger" onClick={() => updateParty(activeParty.id, (p) => ({ ...p, consumptions: p.consumptions.filter((c) => c.id !== item.id) }))}>Remover</Button></article>)}</div></Section>}
+
+            {section === 'balances' && activeParty && <Section title="Saldos" subtitle="Resumo financeiro"><div className="totals"><strong>Total consumido: {formatCurrency(totals.consumed)}</strong><strong>Total a consumir: {formatCurrency(totals.minimum)}</strong></div><div className="grid-list">{activeParty.tabs.map((tab) => { const consumed = activeParty.consumptions.filter((item) => item.tabId === tab.id).reduce((sum, item) => sum + item.price, 0); return <article className="card" key={tab.id}><div><h3>{tab.code}</h3><p>Consumido: {formatCurrency(consumed)} • Saldo restante: {formatCurrency(Math.max(tab.minimumSpend - consumed, 0))}</p></div></article> })}</div></Section>}
           </div>
+        </div>
+      </div>
+      {toast && <div className="toast">{toast}</div>}
 
-          <article className="hero-panel">
-            <div>
-              <span>Projeto em destaque</span>
-              <h2>Transforme sua ideia em um produto digital.</h2>
-              <p>Aplicativos, automações e sites criados com estratégia.</p>
-            </div>
-            <button type="button">Começar</button>
-          </article>
-        </section>
-
-        <section className="quick-actions" aria-label="Atalhos">
-          {shortcuts.map((item) => (
-            <button className="shortcut" type="button" key={item.label}>
-              <span aria-hidden="true">{item.icon}</span>
-              {item.label}
-            </button>
-          ))}
-        </section>
-
-        <section className="content-section" aria-labelledby="projects-title">
-          <div className="section-title">
-            <div>
-              <p>Dashboard</p>
-              <h2 id="projects-title">Projetos recentes</h2>
-            </div>
-            <a href="#todos">Ver todos</a>
-          </div>
-
-          <div className="project-list">
-            {projects.map((project) => (
-              <article className="project-card" key={project.title} style={{ '--accent': project.accent } as CSSProperties}>
-                <div className="project-icon" aria-hidden="true">▣</div>
-                <div>
-                  <h3>{project.title}</h3>
-                  <p>{project.status}</p>
-                  <div className="progress-track" aria-label={`${project.progress}% concluído`}>
-                    <span style={{ width: `${project.progress}%` }}></span>
-                  </div>
-                </div>
-                <strong>{project.progress}%</strong>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="content-section" aria-labelledby="services-title">
-          <div className="section-title">
-            <div>
-              <p>Soluções</p>
-              <h2 id="services-title">O que você pode solicitar</h2>
-            </div>
-          </div>
-
-          <article className="service-banner">
-            <div>
-              <span>Plano ideal</span>
-              <h3>Consultoria + desenvolvimento sob medida</h3>
-              <p>Da validação ao lançamento, tudo acompanhado pelo celular.</p>
-            </div>
-            <a href="https://github.com/techengenhoso/my-app" target="_blank">Abrir app</a>
-          </article>
-        </section>
-
-        <nav className="bottom-tabs" aria-label="Navegação principal">
-          <a className="active" href="#inicio">⌂<span>Início</span></a>
-          <a href="#projetos">▦<span>Projetos</span></a>
-          <a href="#chat">◌<span>Chat</span></a>
-          <a href="#perfil">♙<span>Perfil</span></a>
-        </nav>
-      </section>
+      <Modal title={editingId ? 'Editar festa' : 'Nova festa'} open={modal === 'party'} onClose={() => setModal(null)}><form onSubmit={saveParty} className="form"><input maxLength={20} placeholder="Nome da festa" value={partyForm.name} onChange={(e) => setPartyForm({ ...partyForm, name: e.target.value })} required /><input placeholder="dd/mm/aaaa" value={partyForm.date} onChange={(e) => setPartyForm({ ...partyForm, date: e.target.value })} required />{partyForm.date && !isValidBrazilianDate(partyForm.date) && <small>Use uma data válida no formato dd/mm/aaaa.</small>}<textarea maxLength={50} placeholder="Observações" value={partyForm.notes} onChange={(e) => setPartyForm({ ...partyForm, notes: e.target.value })} /><Button type="submit">Salvar</Button></form></Modal>
+      <Modal title={editingId ? 'Editar comanda' : 'Nova comanda'} open={modal === 'tab'} onClose={() => setModal(null)}><form onSubmit={saveTab} className="form"><input maxLength={20} placeholder="Nome/código da comanda" value={tabForm.code} onChange={(e) => setTabForm({ ...tabForm, code: e.target.value })} required /><input placeholder="Cartão NFC" value={tabForm.nfcCard} onChange={(e) => setTabForm({ ...tabForm, nfcCard: e.target.value })} /><input min="0" step="0.01" type="number" placeholder="Consumo mínimo" value={tabForm.minimumSpend} onChange={(e) => setTabForm({ ...tabForm, minimumSpend: Number(e.target.value) })} /><Button type="submit">Salvar</Button></form></Modal>
+      <Modal title={editingId ? 'Editar item' : 'Novo item'} open={modal === 'menu'} onClose={() => setModal(null)}><form onSubmit={saveMenu} className="form"><input maxLength={20} placeholder="Nome do item" value={menuForm.name} onChange={(e) => setMenuForm({ ...menuForm, name: e.target.value })} required /><input min="0" step="0.01" type="number" placeholder="Preço" value={menuForm.price} onChange={(e) => setMenuForm({ ...menuForm, price: Number(e.target.value) })} /><Button type="submit">Salvar</Button></form></Modal>
     </main>
   )
 }
