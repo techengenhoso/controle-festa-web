@@ -15,7 +15,7 @@ button:disabled { cursor: not-allowed; opacity: .42; }
 
 .app-shell {
   min-height: 100svh;
-  padding: 18px 14px 96px;
+  padding: 8px 14px 96px;
   background:
     radial-gradient(circle at top right, rgba(10, 132, 255, .2), transparent 34%),
     radial-gradient(circle at 10% 0%, rgba(57, 217, 138, .08), transparent 24%),
@@ -23,7 +23,7 @@ button:disabled { cursor: not-allowed; opacity: .42; }
 }
 
 .app-container { width: min(100%, 1120px); margin: 0 auto; }
-.hero { padding: 24px 4px 18px; }
+.hero { padding: 10px 4px 14px; }
 .hero span,
 .section-header p {
   color: #8e8e93;
@@ -203,7 +203,7 @@ button:disabled { cursor: not-allowed; opacity: .42; }
 .chip-list { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 2px; }
 .chip-list .btn { flex: 0 0 auto; }
 .consumption-menu { margin-bottom: 14px; }
-.registered-toggle { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+.registered-toggle { display: flex; justify-content: flex-end; margin-bottom: 0; }
 .modal-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-top: 16px; }
 
 @media (max-width: 520px) {
