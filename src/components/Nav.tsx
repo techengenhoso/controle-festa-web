@@ -1,11 +1,10 @@
 import type { SectionId } from '../types'
 
 const items: Array<{ id: SectionId; label: string; icon: string }> = [
-  { id: 'parties', label: 'Festas', icon: '🎉' },
-  { id: 'tabs', label: 'Comandas', icon: '💳' },
-  { id: 'menu', label: 'Cardápios', icon: '🍹' },
-  { id: 'consumption', label: 'Consumos', icon: '🧾' },
-  { id: 'balances', label: 'Saldos', icon: '📊' },
+  { id: 'parties', label: 'Início', icon: '⌂' },
+  { id: 'tabs', label: 'Projetos', icon: '▦' },
+  { id: 'consumption', label: 'Chat', icon: '◌' },
+  { id: 'balances', label: 'Perfil', icon: '♙' },
 ]
 
 type NavProps = {
