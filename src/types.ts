@@ -37,4 +37,12 @@ export type Party = {
   consumptions: Consumption[]
 }
 
-export type SectionId = 'parties' | 'tabs' | 'menu' | 'consumption' | 'balances'
+export type Page = 'parties' | 'tabs' | 'menu' | 'consumption' | 'balances'
+
+export type SectionId = Page
+
+export type AppData = {
+  parties: Party[]
+  selectedPartyId?: string
+  selectedTabId?: string
+}
