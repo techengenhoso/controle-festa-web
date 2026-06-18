@@ -120,7 +120,10 @@ button:disabled { cursor: not-allowed; opacity: .42; }
 .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 .badges { display: flex; gap: 6px; margin-top: 10px; }
 .party-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-.party-card-content { width: 100%; }
+.party-card-content,
+.item-card-content { width: 100%; }
+.item-card-content { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.item-card-content .badges { flex: 0 0 auto; flex-wrap: wrap; justify-content: flex-end; margin-top: 0; }
 .party-card-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; }
 .party-card-meta p { margin: 0; }
 .party-card-meta .badges { flex: 0 0 auto; flex-wrap: wrap; justify-content: flex-end; margin-top: 0; }
@@ -203,9 +206,9 @@ button:disabled { cursor: not-allowed; opacity: .42; }
   .section-header > div + * { width: 100%; justify-content: stretch; }
   .section-header > div + * .btn { flex: 1 1 0; min-width: 0; padding-inline: 10px; }
   .party-actions { flex-wrap: nowrap; }
-  .card { flex-direction: column; align-items: stretch; }
-  .card.compact { align-items: stretch; }
-  .card .btn { width: 100%; }
+  .card { align-items: stretch; }
+  .card.compact { align-items: center; }
+  .card.compact .btn { flex: 0 0 auto; }
   .detail-list > div { flex-direction: column; gap: 4px; }
   .detail-list strong { text-align: left; word-break: break-word; }
   .modal-actions .btn { flex: 1 1 100%; }

@@ -8,6 +8,7 @@ export const LIMITS = {
   partyName: 20,
   partyNotes: 50,
   tabCode: 20,
+  tabNfcCard: 10,
   menuItemName: 20,
 } as const
 
@@ -36,7 +37,7 @@ export function normalizeTab(value: Partial<Tab>): Tab {
   return {
     id: value.id ?? createId(),
     code: limitText(value.code, LIMITS.tabCode, 'Comanda'),
-    nfcCard: String(value.nfcCard ?? '').trim(),
+    nfcCard: limitText(value.nfcCard, LIMITS.tabNfcCard),
     minimumSpend: numberOrZero(value.minimumSpend),
     active: value.active ?? true,
     createdAt: value.createdAt ?? new Date().toISOString(),
