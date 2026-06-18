@@ -103,6 +103,11 @@ button:disabled { cursor: not-allowed; opacity: .42; }
 .section-header > div + * { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 
 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.15;
   border: 0;
   border-radius: 999px;
   padding: 11px 15px;
@@ -203,13 +208,16 @@ button:disabled { cursor: not-allowed; opacity: .42; }
 .chip-list { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 2px; }
 .chip-list .btn { flex: 0 0 auto; }
 .consumption-menu { margin-bottom: 14px; }
-.registered-toggle { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+.toggle-panel { display: grid; gap: 14px; margin-top: 14px; padding: 14px; border: 1px solid #3a3a3c; border-radius: 24px; background: #2c2c2e; }
+.toggle-panel > .btn { justify-self: end; }
+.compact-state { min-height: 120px; background: #1c1c1e; }
 .modal-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-top: 16px; }
 
 @media (max-width: 520px) {
   .section-header { flex-direction: column; }
   .section-header > div + * { width: 100%; justify-content: stretch; }
   .section-header > div + * .btn { flex: 1 1 0; min-width: 0; padding-inline: 10px; }
+  .toggle-panel > .btn { width: 100%; justify-self: stretch; }
   .party-actions { flex-wrap: nowrap; }
   .card { align-items: stretch; }
   .card.compact { align-items: center; }
