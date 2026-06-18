@@ -8,8 +8,8 @@
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; background: #000000; }
-button, input, textarea, select { font: inherit; }
+body { margin: 0; min-width: 320px; background: #000000; user-select: none; }
+button, input, textarea, select { font: inherit; user-select: none; }
 button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 button:disabled { cursor: not-allowed; opacity: .42; }
 
