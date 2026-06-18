@@ -21,7 +21,7 @@ function numberOrZero(value: unknown) {
 }
 
 export function sortParties(parties: Party[]) {
-  return [...parties].sort((a, b) => a.date.localeCompare(b.date) || collator.compare(a.name, b.name))
+  return [...parties].sort((a, b) => Number(a.archived) - Number(b.archived) || b.date.localeCompare(a.date) || collator.compare(a.name, b.name))
 }
 
 export function sortTabs(tabs: Tab[]) {
