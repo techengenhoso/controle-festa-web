@@ -74,6 +74,11 @@ function App() {
     consumed: activeParty?.consumptions.filter((item) => balanceTabs.some((tab) => tab.id === item.tabId)).reduce((sum, item) => sum + item.price, 0) ?? 0,
     minimum: balanceTabs.reduce((sum, tab) => sum + Math.max(tab.minimumSpend - (activeParty?.consumptions.filter((item) => item.tabId === tab.id).reduce((tabSum, item) => tabSum + item.price, 0) ?? 0), 0), 0),
   }
+  const activePartyHeader = activeParty ? [
+    activeParty.name,
+    formatStoredDate(activeParty.date),
+    section === 'consumption' && selectedActiveTab ? selectedTabRemaining > 0 ? `A consumir ${formatCurrency(selectedTabRemaining)}` : 'Mínimo consumido' : null,
+  ].filter(Boolean).join(' • ') : 'Não existe festa ativa'
 
 
   function updateParty(partyId: string, updater: (party: Party) => Party) {
@@ -214,7 +219,7 @@ function App() {
       <div className="app-container">
         <header className="hero">
           <h1>Controle Festa</h1>
-          <p>{activeParty ? `${activeParty.name} • ${formatStoredDate(activeParty.date)}` : 'Não existe festa ativa'}</p>
+          <p>{activePartyHeader}</p>
         </header>
 
         <div className="layout">
@@ -230,14 +235,8 @@ function App() {
             {section === 'menu' && activeParty && <Section title="Cardápios" actions={<div className="party-actions"><Button onClick={() => openMenuForm()}>Criar item</Button></div>}>{activeParty.menu.length === 0 ? <div className="empty-state"><p>não existe nenhum item criado</p></div> : <div className="grid-list">{activeParty.menu.map((item) => <button className="card card-button" key={item.id} onClick={() => openMenuDetails(item.id)}><div className="item-card-content"><div><h3>{item.name}</h3><p>{formatCurrency(item.price)}</p></div><div className="badges"><span className={item.active ? 'badge-active' : 'badge-inactive'}>{item.active ? 'Ativo' : 'Inativo'}</span></div></div></button>)}</div>}</Section>}
 
             {section === 'consumption' && activeParty && <Section title="Consumos">
-              {!hasActiveTabsAndMenu ? <div className="empty-state"><p>não existe uma comanda e item do cardápio ativo</p></div> : <>
-                <div className="chip-list">{activeTabs.map((tab) => {
-                  const consumed = activeParty.consumptions.filter((item) => item.tabId === tab.id).reduce((sum, item) => sum + item.price, 0)
-                  const remaining = Math.max(tab.minimumSpend - consumed, 0)
-
-                  return <Button key={tab.id} variant={selectedTab === tab.id ? 'primary' : 'secondary'} onClick={() => setAppData((current) => ({ ...current, selectedTabId: tab.id }))}>{tab.code} • Ativa • {remaining > 0 ? `A consumir ${formatCurrency(remaining)}` : 'Mínimo consumido'}</Button>
-                })}</div>
-                {selectedActiveTab && <div className="totals"><strong>{selectedActiveTab.code} ativa</strong><strong>{selectedTabRemaining > 0 ? `Saldo a consumir: ${formatCurrency(selectedTabRemaining)}` : 'Saldo mínimo consumido'}</strong></div>}
+              {!hasActiveTabsAndMenu ? <div className="empty-state"><p>não existe nenhuma comanda e item ativo</p></div> : <>
+                <div className="chip-list">{activeTabs.map((tab) => <Button key={tab.id} variant={selectedTab === tab.id ? 'primary' : 'secondary'} onClick={() => setAppData((current) => ({ ...current, selectedTabId: tab.id }))}>{tab.code}</Button>)}</div>
                 {selectedActiveTab && <><div className="grid-list consumption-menu">{activeMenu.map((item) => <article className="card compact" key={item.id}><div><h3>{item.name}</h3><p>{formatCurrency(item.price)}</p></div><Button onClick={() => { const menuItem = activeParty.menu.find((menu) => menu.id === item.id); if (!activeParty.active || !selectedActiveTab || !menuItem?.active) return; updateParty(activeParty.id, (party) => ({ ...party, consumptions: [...party.consumptions, { id: id(), tabId: selectedTab, menuItemId: menuItem.id, itemName: menuItem.name, price: menuItem.price, createdAt: new Date().toISOString() }] })); setToast('Item registrado') }}>Registrar</Button></article>)}</div><div className="toggle-panel"><Button variant="secondary" onClick={() => setShowRegistered((value) => !value)}>{showRegistered ? 'Ocultar itens registrados' : 'Mostrar itens registrados'}</Button>{showRegistered && selectedTabConsumptions.length > 0 && <div className="grid-list">{selectedTabConsumptions.map((item) => <article className="card compact" key={item.id}><div><h3>{item.itemName}</h3><p>{formatCurrency(item.price)}</p></div><Button variant="danger" onClick={() => deleteConsumption(item.id)}>Remover</Button></article>)}</div>}</div></>}
               </>}
             </Section>}
