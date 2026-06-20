@@ -1,4 +1,4 @@
-import type { MenuItem, Party, Tab } from '../../types'
+import type { MenuItem, Party, Tab } from '../../party/model/types'
 
 export type PartyForm = Pick<Party, 'name' | 'date' | 'notes'>
 export type TabForm = Pick<Tab, 'code' | 'nfcCard'> & { minimumSpend: string }

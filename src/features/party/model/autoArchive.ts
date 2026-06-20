@@ -1,5 +1,5 @@
-import type { Party } from '../types'
-import { isMoreThanDaysAfterDate } from './date'
+import type { Party } from './types'
+import { isMoreThanDaysAfterDate } from '../../../shared/utils/date'
 import { sortParties } from './normalization'
 
 const AUTO_ARCHIVE_DAYS = 15

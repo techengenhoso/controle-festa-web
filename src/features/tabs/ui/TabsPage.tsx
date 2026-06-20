@@ -1,7 +1,7 @@
-import { Button } from '../../components/Button'
-import { Section } from '../../components/Section'
-import type { Party } from '../../types'
-import { formatCurrency } from '../../utils/currency'
+import { Button } from '../../../shared/ui/Button'
+import { Section } from '../../../shared/ui/Section'
+import type { Party } from '../../party/model/types'
+import { formatCurrency } from '../../../shared/utils/currency'
 
 type TabsPageProps = { party: Party, onCreateTab: () => void, onOpenTabDetails: (tabId: string) => void }
 

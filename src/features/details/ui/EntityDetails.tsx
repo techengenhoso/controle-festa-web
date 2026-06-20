@@ -1,8 +1,8 @@
-import { Button } from '../../components/Button'
-import { Modal } from '../../components/Modal'
-import type { MenuItem, Party, Tab } from '../../types'
-import { formatCurrency } from '../../utils/currency'
-import { formatStoredDate } from '../../utils/date'
+import { Button } from '../../../shared/ui/Button'
+import { Modal } from '../../../shared/ui/Modal'
+import type { MenuItem, Party, Tab } from '../../party/model/types'
+import { formatCurrency } from '../../../shared/utils/currency'
+import { formatStoredDate } from '../../../shared/utils/date'
 
 type EntityDetailsProps = {
   menuDetail?: MenuItem

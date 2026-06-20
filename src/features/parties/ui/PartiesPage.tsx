@@ -1,7 +1,7 @@
-import { Button } from '../../components/Button'
-import { Section } from '../../components/Section'
-import type { Party } from '../../types'
-import { formatStoredDate } from '../../utils/date'
+import { Button } from '../../../shared/ui/Button'
+import { Section } from '../../../shared/ui/Section'
+import type { Party } from '../../party/model/types'
+import { formatStoredDate } from '../../../shared/utils/date'
 
 type PartiesPageProps = {
   visibleParties: Party[]

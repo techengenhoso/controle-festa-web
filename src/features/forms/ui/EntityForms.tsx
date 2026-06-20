@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react'
-import { Button } from '../../components/Button'
-import { Modal } from '../../components/Modal'
-import { formatBrazilianDateInput, isValidBrazilianDate } from '../../utils/date'
+import { Button } from '../../../shared/ui/Button'
+import { Modal } from '../../../shared/ui/Modal'
+import { formatBrazilianDateInput, isValidBrazilianDate } from '../../../shared/utils/date'
 import { formatTabCodeInput, type MenuForm, type PartyForm, type TabForm } from './forms'
 
 type EntityFormsProps = {

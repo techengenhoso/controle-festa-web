@@ -1,7 +1,7 @@
-import type { AppData, MenuItem, Party, Tab } from '../types'
-import { formatCurrency } from '../utils/currency'
-import { formatStoredDate } from '../utils/date'
-import { sortMenu, sortTabs } from '../utils/normalization'
+import type { AppData, MenuItem, Party, Tab } from './types'
+import { formatCurrency } from '../../../shared/utils/currency'
+import { formatStoredDate } from '../../../shared/utils/date'
+import { sortMenu, sortTabs } from './normalization'
 
 export function findActiveParty(appData: AppData) {
   return appData.parties.find((party) => party.id === appData.selectedPartyId && party.active && !party.archived)

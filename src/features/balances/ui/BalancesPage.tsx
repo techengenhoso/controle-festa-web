@@ -1,7 +1,7 @@
-import { Section } from '../../components/Section'
-import type { Party, Tab } from '../../types'
-import { formatCurrency } from '../../utils/currency'
-import { getRemainingMinimum, sumConsumptionsByTab } from '../../domain/partySelectors'
+import { Section } from '../../../shared/ui/Section'
+import type { Party, Tab } from '../../party/model/types'
+import { formatCurrency } from '../../../shared/utils/currency'
+import { getRemainingMinimum, sumConsumptionsByTab } from '../../party/model/selectors'
 
 type BalancesPageProps = { party: Party, balanceTabs: Tab[], totals: { consumed: number, minimum: number } }
 
