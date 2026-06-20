@@ -210,7 +210,8 @@ button:disabled { cursor: not-allowed; opacity: .42; }
 .toggle-panel { display: grid; gap: 14px; margin-top: 14px; padding: 14px; border: 1px solid #3a3a3c; border-radius: 24px; background: #2c2c2e; }
 .toggle-panel > .btn { justify-self: end; }
 .archived-toggle-panel > .btn { justify-self: center; }
-.consumption-tab-actions { justify-content: flex-end; }
+.consumption-tab-actions { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; justify-content: flex-start; padding-bottom: 4px; }
+.consumption-tab-actions .btn { flex: 0 0 auto; white-space: nowrap; }
 .compact-state { min-height: 120px; background: #1c1c1e; }
 .modal-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-top: 16px; }
 
@@ -219,7 +220,8 @@ button:disabled { cursor: not-allowed; opacity: .42; }
   .section-header > div + * { width: 100%; justify-content: stretch; }
   .section-header > div + * .btn { flex: 1 1 0; min-width: 0; padding-inline: 10px; }
   .toggle-panel > .btn { width: 100%; justify-self: stretch; }
-  .consumption-tab-actions { width: 100%; justify-content: stretch; }
+  .consumption-tab-actions { width: 100%; justify-content: flex-start; }
+  .consumption-tab-actions .btn { flex: 0 0 auto; }
   .party-actions { flex-wrap: nowrap; }
   .card { align-items: stretch; }
   .card.compact { align-items: center; }
