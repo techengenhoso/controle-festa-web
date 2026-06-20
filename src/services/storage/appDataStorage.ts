@@ -7,26 +7,30 @@ export const STORAGE_KEY_V1 = "party-control:v1"
 
 const emptyData: AppData = { parties: [] }
 
-function enforceSingleActiveParty(data: AppData): AppData {
-  let foundActive = false
-  const parties = data.parties.map(party => {
-    const active = party.active && !party.archived && !foundActive
-    if (active) foundActive = true
-    return { ...party, active }
-  })
+function readStorage(key: string) {
+  try {
+    return localStorage.getItem(key)
+  } catch {
+    return null
+  }
+}
 
-  return { ...data, parties }
+function writeStorage(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value)
+  } catch {
+    // Ignora ambientes com armazenamento indisponível ou quota excedida.
+  }
 }
 
 export function loadAppData(): AppData {
-  const stored =
-    localStorage.getItem(STORAGE_KEY_V2) ?? localStorage.getItem(STORAGE_KEY_V1)
+  const stored = readStorage(STORAGE_KEY_V2) ?? readStorage(STORAGE_KEY_V1)
   if (!stored) return emptyData
 
   try {
     const parsed = JSON.parse(stored)
     const normalized = normalizeAppData(parsed)
-    return enforceSingleActiveParty({
+    return normalizeAppData({
       ...normalized,
       parties: autoArchiveParties(normalized.parties),
     })
@@ -37,11 +41,13 @@ export function loadAppData(): AppData {
 
 export function saveAppData(data: AppData) {
   const normalized = normalizeAppData(data)
-  localStorage.setItem(
+  writeStorage(
     STORAGE_KEY_V2,
-    JSON.stringify({
-      ...normalized,
-      parties: autoArchiveParties(normalized.parties),
-    })
+    JSON.stringify(
+      normalizeAppData({
+        ...normalized,
+        parties: autoArchiveParties(normalized.parties),
+      })
+    )
   )
 }

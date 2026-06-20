@@ -204,7 +204,9 @@ function App() {
 							{
 								id: createId(),
 								...payload,
-								active: current.parties.every((party) => party.archived),
+								active: current.parties.every(
+									(party) => party.archived || !party.active,
+								),
 								archived: false,
 								createdAt: now,
 								tabs: [],
