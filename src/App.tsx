@@ -77,7 +77,7 @@ function App() {
   const activePartyHeader = activeParty ? [
     activeParty.name,
     formatStoredDate(activeParty.date),
-    section === 'consumption' && selectedActiveTab ? selectedTabRemaining > 0 ? `A consumir ${formatCurrency(selectedTabRemaining)}` : 'Mínimo consumido' : null,
+    section === 'consumption' && hasActiveTabsAndMenu && selectedActiveTab ? selectedTabRemaining > 0 ? `A consumir ${formatCurrency(selectedTabRemaining)}` : 'Mínimo consumido' : null,
   ].filter(Boolean).join(' • ') : 'Não existe festa ativa'
 
 
