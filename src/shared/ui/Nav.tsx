@@ -1,4 +1,4 @@
-import type { SectionId } from '../types'
+import type { SectionId } from '../../features/party/model/types'
 
 const items: Array<{ id: SectionId; label: string; icon: string }> = [
   { id: 'parties', label: 'Festas', icon: '🎉' },

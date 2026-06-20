@@ -1,6 +1,6 @@
-import type { AppData } from '../types'
-import { autoArchiveParties } from './autoArchive'
-import { normalizeAppData } from './normalization'
+import type { AppData } from '../../features/party/model/types'
+import { autoArchiveParties } from '../../features/party/model/autoArchive'
+import { normalizeAppData } from '../../features/party/model/normalization'
 
 export const STORAGE_KEY_V2 = 'party-control:v2'
 export const STORAGE_KEY_V1 = 'party-control:v1'
