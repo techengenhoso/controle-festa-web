@@ -22,5 +22,10 @@ export function parseCurrencyInput(value: string) {
 }
 
 export function formatCurrencyInput(value: number) {
-  return Number.isFinite(value) ? String(value).replace('.', ',') : ''
+  if (!Number.isFinite(value)) return ''
+
+  return new Intl.NumberFormat('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
 }
