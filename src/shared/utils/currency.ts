@@ -1,6 +1,6 @@
-export const brlFormatter = new Intl.NumberFormat('pt-BR', {
-  style: 'currency',
-  currency: 'BRL',
+export const brlFormatter = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
 })
 
 export function formatCurrency(value: number) {
@@ -8,11 +8,11 @@ export function formatCurrency(value: number) {
 }
 
 export function parseCurrencyInput(value: string) {
-  const sanitized = value.trim().replace(/\s/g, '')
+  const sanitized = value.trim().replace(/\s/g, "")
   if (!sanitized) return null
 
-  const normalized = sanitized.includes(',')
-    ? sanitized.replace(/\./g, '').replace(',', '.')
+  const normalized = sanitized.includes(",")
+    ? sanitized.replace(/\./g, "").replace(",", ".")
     : sanitized
 
   if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return null
@@ -22,9 +22,9 @@ export function parseCurrencyInput(value: string) {
 }
 
 export function formatCurrencyInput(value: number) {
-  if (!Number.isFinite(value)) return ''
+  if (!Number.isFinite(value)) return ""
 
-  return new Intl.NumberFormat('pt-BR', {
+  return new Intl.NumberFormat("pt-BR", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value)

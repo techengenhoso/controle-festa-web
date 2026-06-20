@@ -1,9 +1,12 @@
-import { StrictMode } from 'react'
-import { createElement } from 'react'
-import { createRoot } from 'react-dom/client'
-import { App } from './app'
-import './index.css'
+import { createElement, StrictMode } from "react"
+import { createRoot } from "react-dom/client"
+import { App } from "./app"
+import "./index.css"
 
-createRoot(document.getElementById('root')!).render(
-  createElement(StrictMode, null, createElement(App)),
-)
+const rootElement = document.getElementById("root")
+
+if (!rootElement) {
+  throw new Error("Root element not found")
+}
+
+createRoot(rootElement).render(createElement(StrictMode, null, createElement(App)))

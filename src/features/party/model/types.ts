@@ -37,7 +37,7 @@ export type Party = {
   consumptions: Consumption[]
 }
 
-export type Page = 'parties' | 'tabs' | 'menu' | 'consumption' | 'balances'
+export type Page = "parties" | "tabs" | "menu" | "consumption" | "balances"
 
 export type SectionId = Page
 

@@ -8,30 +8,34 @@ function toUtcDate(year: number, month: number, day: number) {
 
 function isRealDate(year: number, month: number, day: number) {
   const date = toUtcDate(year, month, day)
-  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
+  return (
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day
+  )
 }
 
 export function isValidIsoDate(value: string) {
   if (!ISO_DATE_PATTERN.test(value)) return false
-  const [year, month, day] = value.split('-').map(Number)
+  const [year, month, day] = value.split("-").map(Number)
   return isRealDate(year, month, day)
 }
 
 export function isValidBrazilianDate(value: string) {
   if (!BRAZILIAN_DATE_PATTERN.test(value)) return false
-  const [day, month, year] = value.split('/').map(Number)
+  const [day, month, year] = value.split("/").map(Number)
   return isRealDate(year, month, day)
 }
 
 export function brazilianDateToIso(value: string) {
   if (!isValidBrazilianDate(value)) return null
-  const [day, month, year] = value.split('/')
+  const [day, month, year] = value.split("/")
   return `${year}-${month}-${day}`
 }
 
 export function isoDateToBrazilian(value: string) {
   if (!isValidIsoDate(value)) return value
-  const [year, month, day] = value.split('-')
+  const [year, month, day] = value.split("-")
   return `${day}/${month}/${year}`
 }
 
@@ -41,9 +45,9 @@ export function normalizeDateToIso(value: string) {
 }
 
 export function formatBrazilianDate(date = new Date()) {
-  const year = date.getFullYear().toString().padStart(4, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const day = date.getDate().toString().padStart(2, '0')
+  const year = date.getFullYear().toString().padStart(4, "0")
+  const month = (date.getMonth() + 1).toString().padStart(2, "0")
+  const day = date.getDate().toString().padStart(2, "0")
   return `${day}/${month}/${year}`
 }
 
@@ -52,7 +56,7 @@ export function formatStoredDate(value: string) {
 }
 
 export function formatBrazilianDateInput(value: string) {
-  const digits = value.replace(/\D/g, '').slice(0, 8)
+  const digits = value.replace(/\D/g, "").slice(0, 8)
   if (digits.length <= 2) return digits
   if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`
   return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`
@@ -60,7 +64,7 @@ export function formatBrazilianDateInput(value: string) {
 
 export function parseIsoDate(value: string) {
   if (!isValidIsoDate(value)) return null
-  const [year, month, day] = value.split('-').map(Number)
+  const [year, month, day] = value.split("-").map(Number)
   return toUtcDate(year, month, day)
 }
 

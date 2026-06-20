@@ -1,1 +1,1 @@
-export { brlFormatter, formatCurrency } from './currency'
+export { brlFormatter, formatCurrency } from "./currency"
