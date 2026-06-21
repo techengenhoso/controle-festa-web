@@ -548,7 +548,12 @@ function App() {
 				</div>
 			</div>
 
-			{toast && <div className="toast">{toast}</div>}
+			{toast && (
+				<div className="toast" role="status" aria-live="polite">
+					<span className="toast-icon" aria-hidden="true">✓</span>
+					<span>{toast}</span>
+				</div>
+			)}
 
 			<EntityDetails
 				modal={modal}
