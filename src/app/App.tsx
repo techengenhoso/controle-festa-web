@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { EntityDetails } from "../features/details/ui/EntityDetails";
 import { EntityForms } from "../features/forms/ui/EntityForms";
 import type { MenuForm, PartyForm, TabForm } from "../features/forms/ui/forms";
@@ -9,6 +9,8 @@ import {
 	newParty,
 	newTab,
 } from "../features/forms/ui/forms";
+import { NfcScannerButton } from "../features/nfc/ui/NfcScannerButton";
+import { useNfcCardScanner } from "../features/nfc/hooks/useNfcCardScanner";
 import { DEFAULT_MENU_ITEMS } from "../features/party/model/constants";
 import {
 	LIMITS,
@@ -125,6 +127,36 @@ function App() {
 	const canRegisterConsumption = hasActiveTabsAndMenu(activeTabs, activeMenu);
 	const totals = getBalanceTotals(activeParty, balanceTabs);
 	const activePartyHeader = getPartyHeader(activeParty);
+
+	const handleNfcCardDetected = useCallback(
+		(cardId: string) => {
+			const formattedCardId = formatTabCodeInput(cardId).trim();
+			const matchedTab = activeTabs.find(
+				(tab) => formatTabCodeInput(tab.nfcCard).trim() === formattedCardId,
+			);
+
+			if (!matchedTab) {
+				setToast(`Cartão NFC ${formattedCardId || cardId} não encontrado`);
+				return;
+			}
+
+			setAppData((current) => ({
+				...current,
+				selectedTabId: matchedTab.id,
+			}));
+			setSection("consumption");
+			setToast(`Comanda ${matchedTab.code} selecionada por NFC`);
+		},
+		[activeTabs],
+	);
+
+	const { start: startNfcScanner, status: nfcScannerStatus } = useNfcCardScanner({
+		enabled: Boolean(activeParty),
+		onCardDetected: handleNfcCardDetected,
+		onReadError: () => setToast("Não foi possível ler o cartão NFC"),
+		onStartError: () =>
+			setToast("Ative o NFC pelo botão e use um navegador compatível"),
+	});
 
 	function updateParty(partyId: string, updater: (party: Party) => Party) {
 		setAppData((current) =>
@@ -464,8 +496,16 @@ function App() {
 		>
 			<div className="app-container">
 				<header className="hero">
-					<h1>Controle Festa</h1>
-					<p>{activePartyHeader}</p>
+					<div>
+						<h1>Controle Festa</h1>
+						<p>{activePartyHeader}</p>
+					</div>
+					{activeParty && (
+						<NfcScannerButton
+							status={nfcScannerStatus}
+							onStart={startNfcScanner}
+						/>
+					)}
 				</header>
 
 				<div className="layout">
