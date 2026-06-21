@@ -44,27 +44,33 @@ export function PartiesPage({
 					))}
 				</div>
 			)}
-      {archivedParties.length > 0 &&
-        <div className="toggle-panel archived-toggle-panel">
-          <Button variant="secondary" onClick={onToggleArchived}>
-            {showArchived
-              ? "Ocultar festas arquivada"
-              : "Mostrar festas arquivada"}
-          </Button>
+			{archivedParties.length > 0 && (
+				<div className="toggle-panel archived-toggle-panel">
+					<Button variant="secondary" onClick={onToggleArchived}>
+						{showArchived
+							? "Ocultar festas arquivada"
+							: "Mostrar festas arquivada"}
+					</Button>
 
-          {showArchived &&
-            <div className="grid-list">
-              {archivedParties.map((party) => (
-                <PartyCard
-                  key={party.id}
-                  party={party}
-                  onOpenPartyDetails={onOpenPartyDetails}
-                  archived
-                />))}
-            </div>
-          }
-        </div>
-      }
+					{showArchived && (
+						<div className="grid-list">
+							{archivedParties.map((party) => (
+								<PartyCard
+									key={party.id}
+									party={party}
+									onOpenPartyDetails={onOpenPartyDetails}
+									archived
+								/>
+							))}
+						</div>
+					)}
+				</div>
+			)}
+			<div className="party-support">
+				<a className="party-support-link" href="mailto:techengenhoso@outlook.com">
+					Enviar e-mail para suporte
+				</a>
+			</div>
 		</Section>
 	);
 }
