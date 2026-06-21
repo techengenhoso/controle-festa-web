@@ -1,4 +1,5 @@
 import type { PropsWithChildren } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "./Button";
 
 type ModalProps = PropsWithChildren<{
@@ -8,11 +9,21 @@ type ModalProps = PropsWithChildren<{
 }>;
 
 export function Modal({ title, open, onClose, children }: ModalProps) {
+	const dialogRef = useRef<HTMLDialogElement>(null);
+
+	useEffect(() => {
+		if (!open) return;
+
+		const firstInput = dialogRef.current?.querySelector("input");
+		firstInput?.focus();
+	}, [open]);
+
 	if (!open) return null;
 
 	return (
 		<div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
 			<dialog
+				ref={dialogRef}
 				className="modal"
 				open
 				aria-modal="true"
