@@ -1,4 +1,3 @@
-import { formatCurrency } from "../../../shared/utils/currency"
 import { formatStoredDate } from "../../../shared/utils/date"
 import { sortConsumptionsByCreatedAtDesc, sortMenu, sortTabs } from "./normalization"
 import type { AppData, Consumption, MenuItem, Party, Tab } from "./types"
@@ -61,23 +60,9 @@ export function getBalanceTotals(party: Party | undefined, tabs: Tab[]) {
   }
 }
 
-export function getPartyHeader(
-  party: Party | undefined,
-  options: { showTabBalance: boolean; selectedTab?: Tab; remaining: number }
-) {
+export function getPartyHeader(party: Party | undefined) {
   if (!party) return "Não existe festa ativa"
-
-  return [
-    party.name,
-    formatStoredDate(party.date),
-    options.showTabBalance && options.selectedTab
-      ? options.remaining > 0
-        ? `A consumir ${formatCurrency(options.remaining)}`
-        : "Mínimo consumido"
-      : null,
-  ]
-    .filter(Boolean)
-    .join(" • ")
+  return [party.name, formatStoredDate(party.date)].filter(Boolean).join(" • ")
 }
 
 export function findPartyItem<T extends { id: string }>(

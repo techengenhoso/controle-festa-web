@@ -124,11 +124,7 @@ function App() {
 	const balanceTabs = activeTabs;
 	const canRegisterConsumption = hasActiveTabsAndMenu(activeTabs, activeMenu);
 	const totals = getBalanceTotals(activeParty, balanceTabs);
-	const activePartyHeader = getPartyHeader(activeParty, {
-		showTabBalance: section === "consumption" && canRegisterConsumption,
-		selectedTab: selectedActiveTab,
-		remaining: selectedTabRemaining,
-	});
+	const activePartyHeader = getPartyHeader(activeParty);
 
 	function updateParty(partyId: string, updater: (party: Party) => Party) {
 		setAppData((current) =>
@@ -524,6 +520,7 @@ function App() {
 								selectedTab={selectedTab}
 								selectedTabConsumptions={selectedTabConsumptions}
 								selectedActiveTab={selectedActiveTab}
+								selectedTabRemaining={selectedTabRemaining}
 								showRegistered={showRegistered}
 								onDeleteConsumption={deleteConsumption}
 								onRegisterConsumption={registerConsumption}

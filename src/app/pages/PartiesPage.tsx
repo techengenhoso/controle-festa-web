@@ -15,7 +15,10 @@ export function PartiesPage(props: PartiesPageProps) {
     <PartiesFeaturePage {...props} />
 
     <div className="party-support">
-      <a className="party-support-link" href="mailto:techengenhoso@outlook.com">
+      <a
+        className="party-support-link"
+        href="mailto:techengenhoso@outlook.com?subject=Feedback sobre o Controle de Festa"
+      >
         enviar um feedback para a equipe
       </a>
     </div>
