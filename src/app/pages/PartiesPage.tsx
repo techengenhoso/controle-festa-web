@@ -11,5 +11,13 @@ type PartiesPageProps = {
 };
 
 export function PartiesPage(props: PartiesPageProps) {
-	return <PartiesFeaturePage {...props} />;
+  return <>
+    <PartiesFeaturePage {...props} />
+
+    <div className="party-support">
+      <a className="party-support-link" href="mailto:techengenhoso@outlook.com">
+        enviar um feedback para a equipe
+      </a>
+    </div>
+  </>
 }
