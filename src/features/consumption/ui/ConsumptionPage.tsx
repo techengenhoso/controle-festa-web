@@ -31,6 +31,20 @@ export function ConsumptionPage({
 	onSelectTab,
 	onToggleRegistered,
 }: ConsumptionPageProps) {
+	const tabSelector = (
+		<div className="chip-list consumption-tab-selector">
+			{activeTabs.map((tab) => (
+				<Button
+					key={tab.id}
+					variant={selectedTab === tab.id ? "primary" : "secondary"}
+					onClick={() => onSelectTab(tab.id)}
+				>
+					{tab.code}
+				</Button>
+			))}
+		</div>
+	);
+
 	return (
 		<Section title="Consumos">
 			{!hasActiveTabsAndMenu ? (
@@ -39,17 +53,6 @@ export function ConsumptionPage({
 				</div>
 			) : (
 				<>
-					<div className="chip-list">
-						{activeTabs.map((tab) => (
-							<Button
-								key={tab.id}
-								variant={selectedTab === tab.id ? "primary" : "secondary"}
-								onClick={() => onSelectTab(tab.id)}
-							>
-								{tab.code}
-							</Button>
-						))}
-					</div>
 					{selectedActiveTab && (
 						<>
 							<div className="grid-list">
@@ -76,27 +79,28 @@ export function ConsumptionPage({
 
 									{showRegistered && (
 										<div className="grid-list">
-										{selectedTabConsumptions.map((item) => (
-											<article className="card compact" key={item.id}>
-												<div className="consumoRegis">
-                          <h3>{item.itemName}</h3>
-													<p>{formatStoredDateTime(item.createdAt)}</p>
-												</div>
+											{selectedTabConsumptions.map((item) => (
+												<article className="card compact" key={item.id}>
+													<div className="consumoRegis">
+														<h3>{item.itemName}</h3>
+														<p>{formatStoredDateTime(item.createdAt)}</p>
+													</div>
 
-												<Button
-													variant="danger"
-													onClick={() => onDeleteConsumption(item.id)}
-												>
-													Remover
-												</Button>
-											</article>
-										))}
+													<Button
+														variant="danger"
+														onClick={() => onDeleteConsumption(item.id)}
+													>
+														Remover
+													</Button>
+												</article>
+											))}
 										</div>
 									)}
 								</div>
 							)}
 						</>
 					)}
+					{tabSelector}
 				</>
 			)}
 		</Section>
