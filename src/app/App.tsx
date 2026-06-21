@@ -20,6 +20,7 @@ import {
 	getActiveMenu,
 	getActiveTabs,
 	getBalanceTotals,
+	getConsumptionsByTab,
 	getPartyHeader,
 	getRemainingMinimum,
 	hasActiveTabsAndMenu,
@@ -103,9 +104,7 @@ function App() {
 	const activeMenu = getActiveMenu(activeParty);
 	const selectedTab = resolveSelectedTab(appData, activeTabs);
 	const selectedActiveTab = findPartyItem(activeParty?.tabs, selectedTab);
-	const selectedTabConsumptions =
-		activeParty?.consumptions.filter((item) => item.tabId === selectedTab) ??
-		[];
+	const selectedTabConsumptions = getConsumptionsByTab(activeParty, selectedTab);
 	const selectedTabRemaining = getRemainingMinimum(
 		activeParty,
 		selectedActiveTab,
