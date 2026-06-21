@@ -45,6 +45,10 @@ export function sortMenu(menu: MenuItem[]) {
   return [...menu].sort((a, b) => collator.compare(a.name, b.name))
 }
 
+export function sortConsumptionsByCreatedAtDesc(consumptions: Consumption[]) {
+  return [...consumptions].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+}
+
 export function normalizeTab(value: Partial<Tab>): Tab {
   return {
     id: value.id ?? createId(),

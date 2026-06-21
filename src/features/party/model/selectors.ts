@@ -1,7 +1,7 @@
 import { formatCurrency } from "../../../shared/utils/currency"
 import { formatStoredDate } from "../../../shared/utils/date"
-import { sortMenu, sortTabs } from "./normalization"
-import type { AppData, MenuItem, Party, Tab } from "./types"
+import { sortConsumptionsByCreatedAtDesc, sortMenu, sortTabs } from "./normalization"
+import type { AppData, Consumption, MenuItem, Party, Tab } from "./types"
 
 export function findActiveParty(appData: AppData) {
   return (
@@ -24,6 +24,12 @@ export function getActiveTabs(party?: Party) {
 
 export function getActiveMenu(party?: Party) {
   return sortMenu(party?.menu.filter(item => item.active) ?? [])
+}
+
+export function getConsumptionsByTab(party: Party | undefined, tabId: string) {
+  return sortConsumptionsByCreatedAtDesc(
+    party?.consumptions.filter((item: Consumption) => item.tabId === tabId) ?? []
+  )
 }
 
 export function resolveSelectedTab(appData: AppData, activeTabs: Tab[]) {
