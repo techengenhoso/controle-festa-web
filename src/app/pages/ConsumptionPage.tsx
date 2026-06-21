@@ -4,6 +4,7 @@ import type {
 	MenuItem,
 	Tab,
 } from "../../features/party/model/types";
+import { formatCurrency } from "../../shared/utils/currency";
 
 type ConsumptionPageProps = {
 	activeMenu: MenuItem[];
@@ -12,6 +13,7 @@ type ConsumptionPageProps = {
 	selectedTab: string;
 	selectedTabConsumptions: Consumption[];
 	selectedActiveTab?: Tab;
+	selectedTabRemaining: number;
 	showRegistered: boolean;
 	onDeleteConsumption: (consumptionId: string) => void;
 	onRegisterConsumption: (menuItemId: string) => void;
@@ -20,5 +22,18 @@ type ConsumptionPageProps = {
 };
 
 export function ConsumptionPage(props: ConsumptionPageProps) {
-	return <ConsumptionFeaturePage {...props} />;
+	const minimumStatus =
+		props.selectedTabRemaining > 0
+			? `A consumir ${formatCurrency(props.selectedTabRemaining)}`
+			: "Mínimo consumido";
+
+	return (
+		<>
+			<ConsumptionFeaturePage {...props} />
+
+			{props.hasActiveTabsAndMenu && props.selectedActiveTab && (
+				<div className="consumption-minimum-status">{minimumStatus}</div>
+			)}
+		</>
+	);
 }

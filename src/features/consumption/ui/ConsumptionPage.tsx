@@ -76,21 +76,21 @@ export function ConsumptionPage({
 
 									{showRegistered && (
 										<div className="grid-list">
-										{selectedTabConsumptions.map((item) => (
-											<article className="card compact" key={item.id}>
-												<div className="consumoRegis">
-                          <h3>{item.itemName}</h3>
-													<p>{formatStoredDateTime(item.createdAt)}</p>
-												</div>
+											{selectedTabConsumptions.map((item) => (
+												<article className="card compact" key={item.id}>
+													<div className="consumoRegis">
+														<h3>{item.itemName}</h3>
+														<p>{formatStoredDateTime(item.createdAt)}</p>
+													</div>
 
-												<Button
-													variant="danger"
-													onClick={() => onDeleteConsumption(item.id)}
-												>
-													Remover
-												</Button>
-											</article>
-										))}
+													<Button
+														variant="danger"
+														onClick={() => onDeleteConsumption(item.id)}
+													>
+														Remover
+													</Button>
+												</article>
+											))}
 										</div>
 									)}
 								</div>
